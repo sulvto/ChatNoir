@@ -56,13 +56,13 @@ Object.defineProperties(Plate.prototype,{
 
 
 var checkerboard = {
-  cat:{x:4,y:6},
+  cat:{x:6,y:6},
   arr:[],
   map:{self:{},children:[]},
   minTree:{},
   haveArr:[],
   init :function(){
-    for (var i=0;i<10 ;i++) {
+    for (var i=0;i<13 ;i++) {
       var xy;
       if(i%2==0){
         xy = "B";
@@ -105,7 +105,7 @@ var checkerboard = {
         fill = "#FFFF00";
         disabled = true;
       }
-      $(elementId).append('<svg onclick="panClick(this)" data-disabled='+disabled+' data-sn='+i+' data-xy='+itemPlate.place+' data-x='+itemPlate.x+' data-y='+itemPlate.y+' style="left:'+leftVal+'px;top:'+topVal+'px;" ><circle cx="43" cy="50" r="30" stroke="black" stroke-width="2" fill='+fill+'/></svg>');
+      $(elementId).append('<svg onclick="panClick(this)" data-disabled='+disabled+' data-sn='+i+' data-xy='+itemPlate.place+' data-x='+itemPlate.x+' data-y='+itemPlate.y+' style="left:'+leftVal+'px;top:'+topVal+'px;" width="70px" height="70px"><circle cx="35" cy="35" r="30" stroke="black" stroke-width="2" fill='+fill+'/></svg>');
     }
   },
   disabled:function(x,y){
@@ -159,11 +159,16 @@ var checkerboard = {
   },getNear(root){
     var near = [];
     near.push(this.findPlate(root.x,root.y-1));
+    near.push(this.findPlate(root.x,root.y+1));
     near.push(this.findPlate(root.x+1,root.y));
     near.push(this.findPlate(root.x-1,root.y));
-    near.push(this.findPlate(root.x,root.y+1));
-    near.push(this.findPlate(root.x+1,root.y+1));
-    near.push(this.findPlate(root.x-1,root.y+1));
+    if(root.x%2===0){
+      near.push(this.findPlate(root.x+1,root.y+1));
+      near.push(this.findPlate(root.x-1,root.y+1));
+    }else{
+      near.push(this.findPlate(root.x+1,root.y-1));
+      near.push(this.findPlate(root.x-1,root.y-1));
+    }
     return near;
   },diguei(mapNode,plate,parent){
     //排除走过的路
@@ -178,8 +183,8 @@ var checkerboard = {
             return mapNode;
           }
 
-          if(!nearItem.stop&&this.haveArr.indexOf(nearItem.x+""+nearItem.y)===-1){
-            this.haveArr.push(nearItem.x+""+nearItem.y);
+          if(!nearItem.stop&&this.haveArr.indexOf(nearItem.x+"-"+nearItem.y)===-1){
+            this.haveArr.push(nearItem.x+"-"+nearItem.y);
             mapNode.plateChildren.push(nearItem);
           }
       }
@@ -194,21 +199,24 @@ var checkerboard = {
     var returnNode = this.diguei(rootNode,catPlate,null);
 
      var childrenArr = [rootNode];
-
       if(!returnNode){
         while(true){
-            var node = childrenArr[0];
-            childrenArr.splice(0,1);
-            node.children = [];
-            for(var i=0,len=node.plateChildren.length;i<len;i++){
-              node.children[i] = {};
-              returnNode = this.diguei(node.children[i],node.plateChildren[i],node);
+            childrenArr[0];
+
+            childrenArr[0].children = [];
+            for(var i=0,len=childrenArr[0].plateChildren.length;i<len;i++){
+              childrenArr[0].children[i] = {};
+              returnNode = this.diguei(childrenArr[0].children[i],childrenArr[0].plateChildren[i],childrenArr[0]);
                   if(returnNode){
-                    console.log("retturn ");
-                    console.log(returnNode);
+                  console.log("returnNode");
+                  console.log(returnNode);
+                  console.log("root");
+                  console.log(rootNode);
                     var parentNode = returnNode.parent;
-                    var nextNode = parentNode.self;
+                    var nextNode = returnNode.self;
                     var step=0;
+                    console.log("parentNode");
+                    console.log(parentNode);
                     while(true){
                       step++;
                       if(parentNode.parent){
@@ -219,23 +227,30 @@ var checkerboard = {
                       }
                     }
                     console.log(parentNode);
+                    console.log("nextNode ");
                     console.log(nextNode);
                     console.log("step "+step);
                     this.occupy(nextNode.x,nextNode.y);
                     return ;
                   }
+
+            }
+
+            var node = childrenArr[0];
+            childrenArr.splice(0,1);
+            for (var i=0,len=node.children.length;i<len;i++) {
               childrenArr.push(node.children[i]);
             }
+
           if(childrenArr.length<0){
             break;
           }
         }
         console.log("for over");
-
-
+    }else{
+        alert("跑了！！");
+        console.log("跑了！！");
     }
-// console.log(catPlate);
-    //
   },
   print : function(){
     console.log(this.arr);
