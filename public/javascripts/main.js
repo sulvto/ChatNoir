@@ -56,13 +56,14 @@ Object.defineProperties(Plate.prototype,{
 
 
 var checkerboard = {
-  cat:{x:6,y:6},
+  cat:{x:5,y:6},
   arr:[],
   map:{self:{},children:[]},
   minTree:{},
   haveArr:[],
   init :function(){
-    for (var i=0;i<13 ;i++) {
+    var obstacleNumber = 0;
+    for (var i=0;i<11 ;i++) {
       var xy;
       if(i%2==0){
         xy = "B";
@@ -70,13 +71,18 @@ var checkerboard = {
         xy="C";
       }
       var topVal = (i*60);
-      for (var j=1;j<13;j++) {
+      for (var j=1;j<12;j++) {
         var leftVal = (j*70);
         xy = nextABC(xy);
         if(i%2==0){
           leftVal +=35;
         }
-        var plate = new Plate(i,j,xy);
+        var stop = false;
+        if(obstacleNumber<10&&Math.floor(Math.random()*10)===i&&(this.cat.x!=i||this.cat.y!=j)){
+          obstacleNumber++;
+          stop = true;
+        }
+        var plate = new Plate(i,j,xy,stop);
         if(i===this.cat.x&&j===this.cat.y){
           this.cat.place = xy;
           plate.occupy(true);
@@ -98,11 +104,11 @@ var checkerboard = {
       if(itemPlate.x%2==0){
         leftVal +=35;
       }
-      var fill = itemPlate.stop?"#000000":"red";
+      var fill = itemPlate.stop?"#6B8E23":"#CCFF33";
       var topVal = (itemPlate.x*60);
       var disabled = itemPlate.stop;
       if(itemPlate.isOccupy){
-        fill = "#FFFF00";
+        fill = "#000000";
         disabled = true;
       }
       $(elementId).append('<svg onclick="panClick(this)" data-disabled='+disabled+' data-sn='+i+' data-xy='+itemPlate.place+' data-x='+itemPlate.x+' data-y='+itemPlate.y+' style="left:'+leftVal+'px;top:'+topVal+'px;" width="70px" height="70px"><circle cx="35" cy="35" r="30" stroke="black" stroke-width="2" fill='+fill+'/></svg>');
@@ -127,9 +133,7 @@ var checkerboard = {
     }
   },
   occupy:function(x,y){
-    if(!(x&&y)){
-      throw new Error("Illegal Argument Exception ： x->"+x+" y->"+y);
-    }else if(this.cat.x==Number.parseInt(x)&&this.cat.y===Number.parseInt(y)){
+    if(this.cat.x==Number.parseInt(x)&&this.cat.y===Number.parseInt(y)){
       //TODO error
       throw new Error("Illegal Argument Exception in cat： x->"+x+" y->"+y);
     }
@@ -200,9 +204,8 @@ var checkerboard = {
 
      var childrenArr = [rootNode];
       if(!returnNode){
-        while(true){
-            childrenArr[0];
 
+        while(true){
             childrenArr[0].children = [];
             for(var i=0,len=childrenArr[0].plateChildren.length;i<len;i++){
               childrenArr[0].children[i] = {};
@@ -232,21 +235,28 @@ var checkerboard = {
                     console.log("step "+step);
                     this.occupy(nextNode.x,nextNode.y);
                     return ;
-                  }
+                  }else{
 
             }
-
+}
             var node = childrenArr[0];
             childrenArr.splice(0,1);
             for (var i=0,len=node.children.length;i<len;i++) {
               childrenArr.push(node.children[i]);
             }
 
-          if(childrenArr.length<0){
-            break;
+          if(childrenArr.length<1){
+            console.log("围住！");
+            if(rootNode.plateChildren.length<1){
+                console.log("堵死！");
+                alert("堵死！");
+            }else{
+                this.occupy(rootNode.plateChildren[0].x,rootNode.plateChildren[0].y);
+            }
+            return;
           }
         }
-        console.log("for over");
+
     }else{
         alert("跑了！！");
         console.log("跑了！！");
