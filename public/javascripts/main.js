@@ -1,3 +1,8 @@
+/**
+ * Created by sulvto on 15-12-17.
+ */
+
+
 function nextABC(v) {
     switch (v) {
         case "A":
