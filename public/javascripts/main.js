@@ -60,13 +60,16 @@ Object.defineProperties(Plate.prototype, {
 
 
 var checkerboard = {
-    cat: {x: 5, y: 6},
+    // init function
+    cat: {},
     arr: [],
     map: {self: {}, children: []},
     minTree: {},
     haveArr: [],
     init: function () {
         var obstacleNumber = 0;
+        this.cat = {x: 5, y: 6};
+        this.arr= [];
         for (var i = 0; i < 11; i++) {
             var xy;
             if (i % 2 == 0) {
@@ -257,7 +260,9 @@ var checkerboard = {
                     console.log("围住！");
                     if (rootNode.plateChildren.length < 1) {
                         console.log("堵死！");
-                        alert("堵死！");
+                        if(window.confirm("你赢了，再来一次？")){
+                            this.init();
+                        }
                     } else {
                         this.occupy(rootNode.plateChildren[0].x, rootNode.plateChildren[0].y);
                     }
@@ -266,8 +271,11 @@ var checkerboard = {
             }
 
         } else {
-            alert("跑了！！");
-            console.log("跑了！！");
+            console.log("你输了！！");
+            if(window.confirm("你输了，再来一次？")){
+                this.init();
+            }
+
         }
     },
     print: function () {
