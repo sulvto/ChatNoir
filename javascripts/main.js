@@ -32,7 +32,7 @@ function Plate(x, y, place, stop) {
         x: {value: x, enumerable: true, writable: false, configurable: false},
         y: {value: y, enumerable: true, writable: false, configurable: false},
         place: {value: place, enumerable: true, writable: false, configurable: false},
-        stop: {value: stop === true ? true : false, enumerable: true, writable: true, configurable: false},
+        stop: {value: stop === true, enumerable: true, writable: true, configurable: false},
         isOccupy: {value: false, enumerable: true, writable: true, configurable: false}
     };
 
@@ -53,7 +53,7 @@ Object.defineProperties(Plate.prototype, {
             if (this.stop) {
                 return;
             }
-            this.isOccupy = bool == true ? true : false;
+            this.isOccupy = bool == true;
         }
     }
 });
