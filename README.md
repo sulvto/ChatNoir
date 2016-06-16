@@ -1,2 +1,2 @@
 # ChatNoir
-http://127.0.0.1:3000/
+[http://sulvto.github.io/ChatNoir/](http://sulvto.github.io/ChatNoir/) 
